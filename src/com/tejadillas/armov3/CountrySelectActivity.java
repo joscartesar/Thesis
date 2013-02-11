@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 public class CountrySelectActivity extends Activity {
 
-	public final static String EXTRA_COUNTRY = "com.tusmuertostos.botonesacarino.COUNTRY";
+	public final static String EXTRA_COUNTRY = "com.tejadillas.armov3.COUNTRY";
 	private Intent intent;
 	private String country;
 
