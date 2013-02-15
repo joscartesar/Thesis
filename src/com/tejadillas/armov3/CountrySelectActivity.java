@@ -1,5 +1,12 @@
 package com.tejadillas.armov3;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -22,6 +29,9 @@ public class CountrySelectActivity extends Activity {
 	public final static String EXTRA_COUNTRY = "com.tejadillas.armov3.COUNTRY";
 	private Intent intent;
 	private String country;
+	private ArrayList<String[]> landformsDB;
+	
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +71,11 @@ public class CountrySelectActivity extends Activity {
 
 			}
 		});
+		
+		landformsDB = new ArrayList<String[]>();
+		
+		//Preprocessing
+		filterFile();
 
 	}
 
@@ -107,5 +122,75 @@ public class CountrySelectActivity extends Activity {
 		AlertDialog alertDialog = alertDialogBuilder.create();
 		alertDialog.show();
 
+	}
+	
+	public void filterFile() {
+
+		BufferedReader reader = null;
+		
+//		To get access to the folder /assets we need the context of the application
+		getApplicationContext().getAssets();
+		
+		Intent intent = getIntent();
+		String message = intent.getStringExtra(CountrySelectActivity.EXTRA_COUNTRY);
+		String fileName = null;
+		if(message.equals("Norway")){
+			fileName = "NO.txt";
+		}else if(message.equals("Spain")){
+			fileName = "ES.txt";
+		}else if(message.equals("Poland")){
+			fileName = "PL.txt";
+		}else if(message.equals("France")){
+			fileName = "FR.txt";
+		}else if(message.equals("Italy")){
+			fileName = "IT.txt";
+		}else if(message.equals("Germany")){
+			fileName = "DE.txt";
+		}else if(message.equals("England")){
+			fileName = "GB.txt";
+		}
+		
+		InputStream is = null;
+		try {
+			is = getResources().getAssets().open(fileName);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		try {
+			reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
+		String line = "";
+		while (line != null) {
+			String[] landform = new String[4];
+			try {
+				line = reader.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if (line == null)
+				break;
+			String[] fields = line.split("\t");
+
+			if (fields[6].equals("H") || fields[6].equals("L") || 
+					fields[6].equals("T") || fields[6].equals("V")) {
+				landform[0] = fields[1];
+				landform[1] = fields[4];
+				landform[2] = fields[5];
+				landform[3] = fields[16];
+				landformsDB.add(landform);
+			}
+			
+		}
+		
+		landformsDB.toString();
+
+		try {
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

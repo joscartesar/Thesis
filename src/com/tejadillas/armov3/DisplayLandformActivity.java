@@ -32,7 +32,6 @@ public class DisplayLandformActivity extends LookAR {
 	private double device_longitude;
 	private double device_altitude;
 
-	private ArrayList<String[]> landformsDB;
 	private ArrayList<String[]> distanceViewLandforms;
 	private String[] landform;
 	private ArrayList<EntityData> labelList;
@@ -53,13 +52,11 @@ public class DisplayLandformActivity extends LookAR {
 		device_altitude = 0;
 		
 		// Initializations
-		landformsDB = new ArrayList<String[]>();
 		distanceViewLandforms = new ArrayList<String[]>();
 		labelList = new ArrayList<EntityData>();
 		
 		
-		//Preprocessing
-		filterFile();
+
 
 		
 		// Enable hud over the camera view
@@ -136,73 +133,7 @@ public class DisplayLandformActivity extends LookAR {
 		mLocationManager.removeUpdates(mLocationListener);
 	}
 
-	public void filterFile() {
-
-		BufferedReader reader = null;
-		
-//		To get access to the folder /assets we need the context of the application
-		getApplicationContext().getAssets();
-		
-		Intent intent = getIntent();
-		String message = intent.getStringExtra(CountrySelectActivity.EXTRA_COUNTRY);
-		String fileName = null;
-		if(message.equals("Norway")){
-			fileName = "NO.txt";
-		}else if(message.equals("Spain")){
-			fileName = "ES.txt";
-		}else if(message.equals("Poland")){
-			fileName = "PL.txt";
-		}else if(message.equals("France")){
-			fileName = "FR.txt";
-		}else if(message.equals("Italy")){
-			fileName = "IT.txt";
-		}else if(message.equals("Germany")){
-			fileName = "DE.txt";
-		}else if(message.equals("England")){
-			fileName = "GB.txt";
-		}
-		
-		InputStream is = null;
-		try {
-			is = getResources().getAssets().open(fileName);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		try {
-			reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
-		String line = "";
-		while (line != null) {
-			String[] landform = new String[4];
-			try {
-				line = reader.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			if (line == null)
-				break;
-			String[] fields = line.split("\t");
-
-			if (fields[6].equals("H") || fields[6].equals("L") || 
-					fields[6].equals("T") || fields[6].equals("V")) {
-				landform[0] = fields[1];
-				landform[1] = fields[4];
-				landform[2] = fields[5];
-				landform[3] = fields[16];
-				landformsDB.add(landform);
-			}
-			
-		}
-
-		try {
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	
 
 	private void distanceViewLandformsFilter() {
 
