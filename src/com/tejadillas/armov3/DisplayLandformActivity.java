@@ -1,10 +1,5 @@
 package com.tejadillas.armov3;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import android.content.Context;
@@ -26,12 +21,13 @@ import es.ucm.look.data.LookData;
 public class DisplayLandformActivity extends LookAR {
 
 	private LocationManager mLocationManager;
-	private LocationListener mLocationListener; 
+	private LocationListener mLocationListener;
 
 	private double device_latitude;
 	private double device_longitude;
 	private double device_altitude;
 
+	private ArrayList<String[]> landformsDB;
 	private ArrayList<String[]> distanceViewLandforms;
 	private String[] landform;
 	private ArrayList<EntityData> labelList;
@@ -46,35 +42,46 @@ public class DisplayLandformActivity extends LookAR {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		device_latitude = 0;
 		device_longitude = 0;
 		device_altitude = 0;
-		
+
 		// Initializations
+		landformsDB = new ArrayList<String[]>();
 		distanceViewLandforms = new ArrayList<String[]>();
 		labelList = new ArrayList<EntityData>();
-		
-		
 
+		Intent intent = getIntent();
+		String message = intent
+				.getStringExtra(CountrySelectActivity.EXTRA_COUNTRY);
+		String[] firstSplit = message.split(";");
+		for (String group : firstSplit) {
+			String[] secondSplit = group.split(",");
+			landformsDB.add(secondSplit);
+		}
 
-		
+		// for (String[] field : landformsDB) {
+		// System.out.println(field[0] + "\t" + field[1] + "\t" + field[2]
+		// + "\t" + field[3]);
+
 		// Enable hud over the camera view
 		ViewGroup hud = this.getHudContainer();
-		hud.addView(LookARUtil.getView(R.layout.activity_display_landform, null));
+		hud.addView(LookARUtil
+				.getView(R.layout.activity_display_landform, null));
 
 		// Handler for the button to update coordinates
 		Button gps_button = (Button) findViewById(R.id.button_gps);
 		gps_button.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				Toast.makeText(context, "Updating coordinates: \n" +
-										device_latitude + "\n" +
-										device_longitude + "\n" +
-										device_altitude,
+				Toast.makeText(
+						context,
+						"Updating coordinates: \n" + device_latitude + "\n"
+								+ device_longitude + "\n" + device_altitude,
 						Toast.LENGTH_SHORT).show();
-				mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-						0, 0, mLocationListener);
+				mLocationManager.requestLocationUpdates(
+						LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
 			}
 		});
 
@@ -84,10 +91,9 @@ public class DisplayLandformActivity extends LookAR {
 		mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 				0, 0, mLocationListener);
 
-		LookData.getInstance()
-				.setWorldEntityFactory(new LabelEntityFactory());
+		LookData.getInstance().setWorldEntityFactory(new LabelEntityFactory());
 
-				LookData.getInstance().updateData();
+		LookData.getInstance().updateData();
 
 	}
 
@@ -101,7 +107,7 @@ public class DisplayLandformActivity extends LookAR {
 			device_altitude = location.getAltitude();
 
 			distanceViewLandformsFilter();
-			
+
 			for (String[] s : distanceViewLandforms) {
 				createLabels(s);
 			}
@@ -124,7 +130,6 @@ public class DisplayLandformActivity extends LookAR {
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 
 		}
-
 	}
 
 	@Override
@@ -132,8 +137,6 @@ public class DisplayLandformActivity extends LookAR {
 		super.onStop();
 		mLocationManager.removeUpdates(mLocationListener);
 	}
-
-	
 
 	private void distanceViewLandformsFilter() {
 
@@ -160,9 +163,11 @@ public class DisplayLandformActivity extends LookAR {
 		} else {
 			altitude = 0.0f;
 		}
-		data.setLocation(1000 * (Double.valueOf(Double.parseDouble(s[2])).floatValue() - Double.valueOf(device_longitude).floatValue()),
-				altitude, 
-				1000 * (Double.valueOf(Double.parseDouble(s[1])).floatValue() - Double.valueOf(device_latitude).floatValue()));
+		data.setLocation(1000 * (Double.valueOf(Double.parseDouble(s[2]))
+				.floatValue() - Double.valueOf(device_longitude).floatValue()),
+				altitude, 1000 * (Double.valueOf(Double.parseDouble(s[1]))
+						.floatValue() - Double.valueOf(device_latitude)
+						.floatValue()));
 		data.setPropertyValue(LabelEntityFactory.NAME, s[0]);
 		labelList.add(data);
 	}

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -29,9 +28,9 @@ public class CountrySelectActivity extends Activity {
 	public final static String EXTRA_COUNTRY = "com.tejadillas.armov3.COUNTRY";
 	private Intent intent;
 	private String country;
-	private ArrayList<String[]> landformsDB;
-	
-
+	// private ArrayList<String[]> landformsDB;
+	private String landformsDBstring;
+	private StringBuilder strBuilder;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +38,7 @@ public class CountrySelectActivity extends Activity {
 		setContentView(R.layout.activity_country_select);
 
 		country = "Norway";
+		landformsDBstring = "";
 		intent = new Intent(this, DisplayLandformActivity.class);
 
 		final Button boton = (Button) findViewById(R.id.button_1);
@@ -50,7 +50,7 @@ public class CountrySelectActivity extends Activity {
 						Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
 				if (providers.contains("gps")) {
 					// GPS Enabled
-					intent.putExtra(EXTRA_COUNTRY, country);
+					intent.putExtra(EXTRA_COUNTRY, landformsDBstring);
 					startActivity(intent);
 				} else {
 					CheckEnableGPS();
@@ -71,11 +71,11 @@ public class CountrySelectActivity extends Activity {
 
 			}
 		});
-		
-		landformsDB = new ArrayList<String[]>();
-		
-		//Preprocessing
-		filterFile();
+
+		// landformsDB = new ArrayList<String[]>();
+
+		// Preprocessing
+		filterFile(country);
 
 	}
 
@@ -123,33 +123,36 @@ public class CountrySelectActivity extends Activity {
 		alertDialog.show();
 
 	}
-	
-	public void filterFile() {
+
+	public void filterFile(String countrySelected) {
 
 		BufferedReader reader = null;
-		
-//		To get access to the folder /assets we need the context of the application
+		strBuilder = new StringBuilder();
+
+		// To get access to the folder /assets we need the context of the
+		// application
 		getApplicationContext().getAssets();
-		
-		Intent intent = getIntent();
-		String message = intent.getStringExtra(CountrySelectActivity.EXTRA_COUNTRY);
+
+		// Intent intent = getIntent();
+		// String message =
+		// intent.getStringExtra(CountrySelectActivity.EXTRA_COUNTRY);
 		String fileName = null;
-		if(message.equals("Norway")){
+		if (countrySelected.equals("Norway")) {
 			fileName = "NO.txt";
-		}else if(message.equals("Spain")){
+		} else if (countrySelected.equals("Spain")) {
 			fileName = "ES.txt";
-		}else if(message.equals("Poland")){
+		} else if (countrySelected.equals("Poland")) {
 			fileName = "PL.txt";
-		}else if(message.equals("France")){
+		} else if (countrySelected.equals("France")) {
 			fileName = "FR.txt";
-		}else if(message.equals("Italy")){
+		} else if (countrySelected.equals("Italy")) {
 			fileName = "IT.txt";
-		}else if(message.equals("Germany")){
+		} else if (countrySelected.equals("Germany")) {
 			fileName = "DE.txt";
-		}else if(message.equals("England")){
+		} else if (countrySelected.equals("England")) {
 			fileName = "GB.txt";
 		}
-		
+
 		InputStream is = null;
 		try {
 			is = getResources().getAssets().open(fileName);
@@ -164,7 +167,7 @@ public class CountrySelectActivity extends Activity {
 
 		String line = "";
 		while (line != null) {
-			String[] landform = new String[4];
+			// String[] landform = new String[4];
 			try {
 				line = reader.readLine();
 			} catch (IOException e) {
@@ -174,18 +177,21 @@ public class CountrySelectActivity extends Activity {
 				break;
 			String[] fields = line.split("\t");
 
-			if (fields[6].equals("H") || fields[6].equals("L") || 
-					fields[6].equals("T") || fields[6].equals("V")) {
-				landform[0] = fields[1];
-				landform[1] = fields[4];
-				landform[2] = fields[5];
-				landform[3] = fields[16];
-				landformsDB.add(landform);
+			if (fields[6].equals("H") || fields[6].equals("L")
+					|| fields[6].equals("T") || fields[6].equals("V")) {
+				// landform[0] = fields[1];
+				// landform[1] = fields[4];
+				// landform[2] = fields[5];
+				// landform[3] = fields[16];
+				// landformsDB.add(landform);
+				strBuilder.append(fields[1] + "," + fields[4] + "," + fields[5]
+						+ "," + fields[16] + ";");
 			}
-			
+
 		}
-		
-		landformsDB.toString();
+
+		strBuilder.deleteCharAt(strBuilder.length() - 1);
+		landformsDBstring = strBuilder.toString();
 
 		try {
 			reader.close();
