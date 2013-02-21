@@ -3,7 +3,6 @@ package com.tejadillas.armov3;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -20,6 +19,8 @@ import es.ucm.look.data.LookData;
 
 public class DisplayLandformActivity extends LookAR {
 
+	protected MyApplication app;
+	
 	private LocationManager mLocationManager;
 	private LocationListener mLocationListener;
 
@@ -27,7 +28,6 @@ public class DisplayLandformActivity extends LookAR {
 	private double device_longitude;
 	private double device_altitude;
 
-	private ArrayList<String[]> landformsDB;
 	private ArrayList<String[]> distanceViewLandforms;
 	private String[] landform;
 	private ArrayList<EntityData> labelList;
@@ -48,22 +48,22 @@ public class DisplayLandformActivity extends LookAR {
 		device_altitude = 0;
 
 		// Initializations
-		landformsDB = new ArrayList<String[]>();
-		distanceViewLandforms = new ArrayList<String[]>();
-		labelList = new ArrayList<EntityData>();
+//		landformsDB = new ArrayList<String[]>();
+//		distanceViewLandforms = new ArrayList<String[]>();
+//		labelList = new ArrayList<EntityData>();
 
-		Intent intent = getIntent();
-		String message = intent
-				.getStringExtra(CountrySelectActivity.EXTRA_COUNTRY);
-		String[] firstSplit = message.split(";");
-		for (String group : firstSplit) {
-			String[] secondSplit = group.split(",");
-			landformsDB.add(secondSplit);
-		}
+		// Intent intent = getIntent();
+//		ArrayList<String> message = getIntent().getStringArrayListExtra(
+//				CountrySelectActivity.EXTRA_COUNTRY);
+//
+//		for (String group : message) {
+//			String[] secondSplit = group.split(",");
+//			landformsDB.add(secondSplit);
+//		}
 
-		// for (String[] field : landformsDB) {
-		// System.out.println(field[0] + "\t" + field[1] + "\t" + field[2]
-		// + "\t" + field[3]);
+//		 for (String[] field : landformsDB) {
+//		 System.out.println(field[0] + "\t" + field[1] + "\t" + field[2]
+//		 + "\t" + field[3]);
 
 		// Enable hud over the camera view
 		ViewGroup hud = this.getHudContainer();
@@ -142,8 +142,8 @@ public class DisplayLandformActivity extends LookAR {
 
 		landform = new String[4];
 		float[] result = new float[7];
-		for (int i = 0; i < landformsDB.size(); i++) {
-			landform = landformsDB.get(i);
+		for (int i = 0; i < MySingleton.getInstance().landformsDB.size(); i++) {
+			landform = MySingleton.getInstance().landformsDB.get(i);
 			double lflatitude = Double.parseDouble(landform[1]);
 			double lflongitude = Double.parseDouble(landform[2]);
 			Location.distanceBetween(device_latitude, device_longitude,
