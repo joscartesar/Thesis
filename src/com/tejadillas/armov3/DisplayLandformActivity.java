@@ -49,8 +49,8 @@ public class DisplayLandformActivity extends LookAR {
 
 		// Initializations
 //		landformsDB = new ArrayList<String[]>();
-//		distanceViewLandforms = new ArrayList<String[]>();
-//		labelList = new ArrayList<EntityData>();
+		distanceViewLandforms = new ArrayList<String[]>();
+		labelList = new ArrayList<EntityData>();
 
 		// Intent intent = getIntent();
 //		ArrayList<String> message = getIntent().getStringArrayListExtra(
@@ -106,6 +106,7 @@ public class DisplayLandformActivity extends LookAR {
 			device_longitude = location.getLongitude();
 			device_altitude = location.getAltitude();
 
+			
 			distanceViewLandformsFilter();
 
 			for (String[] s : distanceViewLandforms) {

@@ -17,7 +17,8 @@
         android:name="com.tejadillas.armov3.MyApplication">
         <activity
             android:name=".CountrySelectActivity"
-            android:label="@string/title_activity_country_select" >
+            android:label="@string/title_activity_country_select" 
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +27,8 @@
         </activity>
         <activity
             android:name=".DisplayLandformActivity"
-            android:label="@string/title_activity_display_landform" >
+            android:label="@string/title_activity_display_landform" 
+            android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.tejadillas.armov3.CountrySelectActivity" />
