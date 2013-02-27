@@ -10,6 +10,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -24,24 +26,20 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 public class CountrySelectActivity extends Activity {
-	
-	protected MyApplication app;
 
-	public final static String EXTRA_COUNTRY = "com.tejadillas.armov3.COUNTRY";
 	private Intent intent;
 	private String country;
-//	private ArrayList<String> landformsDB;
-//	private String landformsDBstring;
-//	private StringBuilder strBuilder;
+	private DBManager dbman;
+	
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_country_select);
 
+		dbman = new DBManager(this);
 		country = "Norway";
-//		landformsDB = new ArrayList<String>();
-//		landformsDBstring = "";
 		intent = new Intent(this, DisplayLandformActivity.class);
 
 		final Button boton = (Button) findViewById(R.id.button_1);
@@ -53,8 +51,6 @@ public class CountrySelectActivity extends Activity {
 						Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
 				if (providers.contains("gps")) {
 					// GPS Enabled
-					// String[] firstSplit = landformsDBstring.split(";");
-//					intent.putStringArrayListExtra(EXTRA_COUNTRY, landformsDB);
 					startActivity(intent);
 				} else {
 					CheckEnableGPS();
@@ -68,7 +64,7 @@ public class CountrySelectActivity extends Activity {
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
 				country = arg0.getItemAtPosition(arg2).toString();
-				filterFile(country);
+				filterFile(dbman, country);
 
 			}
 
@@ -79,7 +75,15 @@ public class CountrySelectActivity extends Activity {
 
 
 		// Preprocessing
-		filterFile(country);
+		filterFile(dbman, country);
+		
+		dbman.open();
+		Cursor c = dbman.getTitle(2);
+		if (c.moveToFirst())
+			DisplayLandform(c);
+		else
+			Toast.makeText(this, "No landform found", Toast.LENGTH_LONG).show();
+		dbman.close();
 
 	}
 
@@ -128,7 +132,7 @@ public class CountrySelectActivity extends Activity {
 
 	}
 
-	public void filterFile(String countrySelected) {
+	public void filterFile(DBManager database, String countrySelected) {
 
 		BufferedReader reader = null;
 
@@ -165,9 +169,10 @@ public class CountrySelectActivity extends Activity {
 			e.printStackTrace();
 		}
 
+		database.open();
 		String line = "";
 		while (line != null) {
-			String[] landform = new String[4];
+//			String[] landform = new String[4];
 			try {
 				line = reader.readLine();
 			} catch (IOException e) {
@@ -179,24 +184,32 @@ public class CountrySelectActivity extends Activity {
 
 			if (fields[6].equals("H") || fields[6].equals("L")
 					|| fields[6].equals("T") || fields[6].equals("V")) {
-				 landform[0] = fields[1];
-				 landform[1] = fields[4];
-				 landform[2] = fields[5];
-				 landform[3] = fields[16];
-				 MySingleton.getInstance().landformsDB.add(landform);
-//				landformsDB.add(fields[1] + "," + fields[4] + "," + fields[5]
-//						+ "," + fields[16]);
+//				 landform[0] = fields[1];
+//				 landform[1] = fields[4];
+//				 landform[2] = fields[5];
+//				 landform[3] = fields[16];
+				database.insertLandform(fields[1], fields[4], fields[5],
+						fields[16]);
 			}
 
 		}
 
-		// strBuilder.deleteCharAt(strBuilder.length() - 1);
-		// landformsDBstring = strBuilder.toString();
 
 		try {
 			reader.close();
+			database.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+	
+	public void DisplayLandform(Cursor c) {
+		Toast.makeText(
+				this,
+				"id: " + c.getString(0) + "\n" + "Name: " + c.getString(1)
+						+ "\n" + "Lat: " + c.getString(2) + "\n" + "Long:  "
+						+ c.getString(3) + "\n" + "Alt:  " + c.getString(4),
+				Toast.LENGTH_LONG).show();
+	}
+	
 }

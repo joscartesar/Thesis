@@ -18,8 +18,6 @@ import es.ucm.look.data.EntityData;
 import es.ucm.look.data.LookData;
 
 public class DisplayLandformActivity extends LookAR {
-
-	protected MyApplication app;
 	
 	private LocationManager mLocationManager;
 	private LocationListener mLocationListener;
@@ -51,19 +49,6 @@ public class DisplayLandformActivity extends LookAR {
 //		landformsDB = new ArrayList<String[]>();
 		distanceViewLandforms = new ArrayList<String[]>();
 		labelList = new ArrayList<EntityData>();
-
-		// Intent intent = getIntent();
-//		ArrayList<String> message = getIntent().getStringArrayListExtra(
-//				CountrySelectActivity.EXTRA_COUNTRY);
-//
-//		for (String group : message) {
-//			String[] secondSplit = group.split(",");
-//			landformsDB.add(secondSplit);
-//		}
-
-//		 for (String[] field : landformsDB) {
-//		 System.out.println(field[0] + "\t" + field[1] + "\t" + field[2]
-//		 + "\t" + field[3]);
 
 		// Enable hud over the camera view
 		ViewGroup hud = this.getHudContainer();
@@ -107,16 +92,16 @@ public class DisplayLandformActivity extends LookAR {
 			device_altitude = location.getAltitude();
 
 			
-			distanceViewLandformsFilter();
-
-			for (String[] s : distanceViewLandforms) {
-				createLabels(s);
-			}
-			for (EntityData e : labelList) {
-				LookData.getInstance().getDataHandler().addEntity(e);
-			}
-			LookData.getInstance().updateData();
-			mLocationManager.removeUpdates(mLocationListener);
+//			distanceViewLandformsFilter();
+//
+//			for (String[] s : distanceViewLandforms) {
+//				createLabels(s);
+//			}
+//			for (EntityData e : labelList) {
+//				LookData.getInstance().getDataHandler().addEntity(e);
+//			}
+//			LookData.getInstance().updateData();
+//			mLocationManager.removeUpdates(mLocationListener);
 
 		}
 
@@ -141,18 +126,18 @@ public class DisplayLandformActivity extends LookAR {
 
 	private void distanceViewLandformsFilter() {
 
-		landform = new String[4];
-		float[] result = new float[7];
-		for (int i = 0; i < MySingleton.getInstance().landformsDB.size(); i++) {
-			landform = MySingleton.getInstance().landformsDB.get(i);
-			double lflatitude = Double.parseDouble(landform[1]);
-			double lflongitude = Double.parseDouble(landform[2]);
-			Location.distanceBetween(device_latitude, device_longitude,
-					lflatitude, lflongitude, result);
-			if (result[0] < 10000) {
-				distanceViewLandforms.add(landform);
-			}
-		}
+//		landform = new String[4];
+//		float[] result = new float[7];
+//		for (int i = 0; i < MySingleton.getInstance().landformsDB.size(); i++) {
+//			landform = MySingleton.getInstance().landformsDB.get(i);
+//			double lflatitude = Double.parseDouble(landform[1]);
+//			double lflongitude = Double.parseDouble(landform[2]);
+//			Location.distanceBetween(device_latitude, device_longitude,
+//					lflatitude, lflongitude, result);
+//			if (result[0] < 10000) {
+//				distanceViewLandforms.add(landform);
+//			}
+//		}
 	}
 
 	private void createLabels(String[] s) {
